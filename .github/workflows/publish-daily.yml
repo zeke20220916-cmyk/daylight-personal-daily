@@ -1,0 +1,32 @@
+name: Publish Daylight daily edition
+
+on:
+  push:
+    branches: [main]
+    paths: ['daily-editions/*.json']
+  workflow_dispatch:
+    inputs:
+      edition_path:
+        description: 'Path to the daily edition JSON in this repository'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      DAYLIGHT_EDITION_PATH: ${{ inputs.edition_path || github.event.head_commit.modified[0] }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restore private Firebase credential
+        env:
+          DAYLIGHT_FIREBASE_SERVICE_ACCOUNT: ${{ secrets.DAYLIGHT_FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          test -n "$DAYLIGHT_FIREBASE_SERVICE_ACCOUNT"
+          printf '%s' "$DAYLIGHT_FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/daylight-service-account.json"
+          chmod 600 "$RUNNER_TEMP/daylight-service-account.json"
+      - name: Publish the edition to Firestore
+        run: node scripts/publish-firestore.mjs "$DAYLIGHT_EDITION_PATH" "$RUNNER_TEMP/daylight-service-account.json"
