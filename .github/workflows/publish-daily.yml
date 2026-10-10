@@ -18,7 +18,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     env:
-      DAYLIGHT_EDITION_PATH: ${{ inputs.edition_path || github.event.head_commit.modified[0] }}
+      DAYLIGHT_EDITION_PATH: ${{ inputs.edition_path || 'public/today.json' }}
     steps:
       - uses: actions/checkout@v4
       - name: Restore private Firebase credential
