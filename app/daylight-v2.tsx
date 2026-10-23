@@ -1,6 +1,6 @@
 'use client';
 import {useCallback,useEffect,useRef,useState,type ReactNode} from 'react';
-import {catalog,initial,transition} from '../scripts/lib/learning-record.mjs';
+import {initial,transition} from '../scripts/lib/learning-record.mjs';
 import './daylight-v2.css';
 type Tab='资讯'|'兴趣'|'学习';
 type Task={key:string;title:string;body:string;course:boolean};
@@ -42,7 +42,7 @@ function Lesson({task,record,onSave}:{task:Task;record:Learning;onSave:(task:Tas
  }
  const last=record.events.at(-1),synced=last&&record.sync?.lastEventId===last.id;
  return <section className="v2-lesson">
-  <div className="v2-kicker">{task.course?'继续上次课程':task.key.startsWith('word-')?'每日英语':'每日概念 · 进阶'}</div>
+  <div className="v2-kicker">{task.course?task.title.split('｜')[0]:task.key.startsWith('word-')?'每日英语':'每日概念 · 进阶'}</div>
   <details><summary>{task.title.split('｜').slice(task.title.includes('｜')?1:0).join('｜')}</summary><Markdown text={task.body}/></details>
   <p className="v2-state">{record.status}{record.read?' · 已读':''}{record.review?' · 待复习':''}</p>
   <div className="v2-actions">
